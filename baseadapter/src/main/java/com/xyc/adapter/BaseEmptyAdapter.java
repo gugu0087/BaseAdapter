@@ -1,5 +1,6 @@
 package com.xyc.adapter;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,23 +14,28 @@ import java.util.List;
 /**
  * Create by Admin on 2019/1/2
  */
-public abstract class BaseEmptyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private List<String> mList;
+public abstract class BaseEmptyAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    protected List<T> mList;
+    protected LayoutInflater mLayoutInflater;
+    protected Context mContext;
+    protected int mLayoutResId;
+
     private int mViewType;
 
-    protected abstract RecyclerView.ViewHolder getContentView(ViewGroup parent, int viewType);
 
-    protected abstract void updateUI(RecyclerView.ViewHolder holder, int position);
+    protected abstract void setEmptyUI(BaseViewHolder holder);
 
-    protected abstract void setEmptyUI(ImageView emptyIcon, TextView emptyTip);
+    /**
+     * @param helper
+     * @param item
+     */
+    protected abstract void updateUI(BaseViewHolder helper, T item);
 
-    public BaseEmptyAdapter(List<String> mList) {
+    public BaseEmptyAdapter(Context context, List<T> mList,int layoutResId) {
+        this.mContext = context;
+        this.mLayoutResId = layoutResId;
         this.mList = mList;
-    }
-
-    public BaseEmptyAdapter(List<String> mList, int mViewType) {
-        this.mList = mList;
-        this.mViewType = mViewType;
+        this.mLayoutInflater = LayoutInflater.from(mContext);
     }
 
     /**
@@ -37,35 +43,65 @@ public abstract class BaseEmptyAdapter extends RecyclerView.Adapter<RecyclerView
      */
     public static final int VIEW_TYPE_EMPTY = -1;
 
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        BaseViewHolder baseViewHolder = null;
+
         if (viewType == VIEW_TYPE_EMPTY) {
             View emptyView = LayoutInflater.from(parent.getContext()).inflate(R.layout.empty_view_layout, parent, false);
-            return new EmptyViewHolder(emptyView);
+            return new BaseViewHolder(emptyView);
         }
+
+        baseViewHolder = onBaseViewHolder(parent, viewType);
+
         //在这里根据不同的viewType进行引入不同的布局
-        return getContentView(parent, viewType);
+        return baseViewHolder;
     }
 
+    /**
+     * @param parent
+     */
+    protected BaseViewHolder onBaseViewHolder(ViewGroup parent, int viewType) {
+        return createBaseViewHolder(parent, mLayoutResId);
+    }
+
+    private View mContentView;
+
+    public View getmContentView() {
+        return mContentView;
+    }
+
+    /**
+     * @param parent
+     * @param layoutResId
+     * @return
+     */
+    protected BaseViewHolder createBaseViewHolder(ViewGroup parent, int layoutResId) {
+        if (mContentView == null) {
+            return new BaseViewHolder(getItemView(layoutResId, parent));
+        }
+        return new BaseViewHolder(mContentView);
+    }
+
+    /**
+     * @param layoutResId
+     * @param parent
+     * @return
+     */
+    protected View getItemView(int layoutResId, ViewGroup parent) {
+        return mLayoutInflater.inflate(layoutResId, parent, false);
+    }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        if (holder instanceof EmptyViewHolder) {
-            setEmptyUI(((EmptyViewHolder) holder).ivDefault, ((EmptyViewHolder) holder).tvEmptyTip);
+        int itemViewType = holder.getItemViewType();
+        if (itemViewType == VIEW_TYPE_EMPTY) {
+            setEmptyUI(((BaseViewHolder) holder));
+            return;
         }
-        updateUI(holder, position);
-    }
-
-    class EmptyViewHolder extends RecyclerView.ViewHolder {
-        TextView tvEmptyTip;
-        ImageView ivDefault;
-
-        private EmptyViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvEmptyTip = (TextView) itemView.findViewById(R.id.tvEmptyTip);
-            ivDefault = (ImageView) itemView.findViewById(R.id.ivDefault);
-        }
+        updateUI(((BaseViewHolder) holder), mList.get(position));
     }
 
     @Override

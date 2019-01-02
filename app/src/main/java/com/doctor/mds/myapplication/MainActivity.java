@@ -4,10 +4,7 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +12,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerEmptyView recycleView;
-    private List<String> dataList = new ArrayList<>();
+    private List<DataModel> dataList = new ArrayList<>();
     private DataAdapter itemAdapter;
     private View emptyView;
 
@@ -26,22 +23,24 @@ public class MainActivity extends AppCompatActivity {
         recycleView = (RecyclerEmptyView) findViewById(R.id.recycleView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recycleView.setLayoutManager(layoutManager);
-        itemAdapter = new DataAdapter(dataList);
+        itemAdapter = new DataAdapter(this, dataList);
         recycleView.setAdapter(itemAdapter);
-       initData();
+        initData();
 
-       new Handler().postDelayed(new Runnable() {
-           @Override
-           public void run() {
-               dataList.clear();
-               itemAdapter.notifyDataSetChanged();
-           }
-       },2000);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                dataList.clear();
+                itemAdapter.notifyDataSetChanged();
+            }
+        }, 2000);
     }
 
     private void initData() {
         for (int i = 0; i < 10; i++) {
-            dataList.add(i + "");
+            DataModel dataModel = new DataModel();
+            dataModel.setName("hah" + i);
+            dataList.add(dataModel);
         }
         itemAdapter.notifyDataSetChanged();
     }
