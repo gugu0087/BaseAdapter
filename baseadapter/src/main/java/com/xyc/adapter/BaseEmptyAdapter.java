@@ -6,8 +6,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import java.util.List;
 
@@ -50,7 +48,7 @@ public abstract class BaseEmptyAdapter<T> extends RecyclerView.Adapter<RecyclerV
         BaseViewHolder baseViewHolder = null;
 
         if (viewType == VIEW_TYPE_EMPTY) {
-            View emptyView = LayoutInflater.from(parent.getContext()).inflate(R.layout.empty_view_layout, parent, false);
+            View emptyView = LayoutInflater.from(parent.getContext()).inflate(R.layout.empty_tip_view_layout, parent, false);
             return new BaseViewHolder(emptyView);
         }
 
