@@ -3,22 +3,22 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/ivDefault"
         android:layout_width="127dp"
-        android:layout_height="110dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:src="@drawable/empty_page" />
+        android:src="@mipmap/empty_page" />
 
     <TextView
         android:id="@+id/tvContentTip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="20dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
         android:text="暂时没有需要处理的订单"
         android:textColor="@color/text_color_9B9"
         android:textSize="14sp" />
